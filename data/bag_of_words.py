@@ -36,7 +36,10 @@ def process_text(text): # for multiple processes
     return set()
         
 def preprocess(db_path : str, lang : str):
-    stop_words = set(stopwords.words(lang)) | set(punctuation)
+    with open("./EN-Stopwords.txt", encoding="utf-8") as f:
+        file_stopwords = {line.strip() for line in f if line.strip()}
+
+    stop_words = set(stopwords.words(lang)) | set(punctuation) | file_stopwords
     conn = sqlite3.connect(db_path)
     terms = set()
 
