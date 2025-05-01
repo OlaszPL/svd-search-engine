@@ -481,7 +481,7 @@ def extract_process(jobs_queue, output_queue, html_safe, to_json):
         job = jobs_queue.get()  # job is (id, revid, urlbase, title, page, ordinal)
         if job:
             out = StringIO()  # memory buffer
-            Extractor(*job[:-1], to_json=to_json).extract(out, html_safe)  # przekazujemy to_json
+            Extractor(*job[:-1], to_json=to_json).extract(out, html_safe)
             text = out.getvalue()
             output_queue.put((job[-1], text))  # (ordinal, extracted_text)
             out.close()
