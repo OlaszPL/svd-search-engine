@@ -29,7 +29,8 @@ def create_db(db_path):
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS articles (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,  -- AUTOINCREMENT, starts from 1 by default
+            org_id INTEGER,                        -- original id from data
             revid INTEGER,
             url TEXT,
             title TEXT,
@@ -53,10 +54,10 @@ def insert_json_files_to_db(conn, directory):
                             # dodaj tylko jeśli 'text' nie jest pusty lub None
                             if data.get('text'):
                                 c.execute('''
-                                    INSERT OR IGNORE INTO articles (id, revid, url, title, text)
+                                    INSERT OR IGNORE INTO articles (org_id, revid, url, title, text)
                                     VALUES (?, ?, ?, ?, ?)
                                 ''', (
-                                    int(data.get('id')) if data.get('id') is not None else None,
+                                    int(data.get('id')) if data.get('id') is not None else None,  # org_id
                                     int(data.get('revid')) if data.get('revid') is not None else None,
                                     data.get('url'),
                                     data.get('title'),
