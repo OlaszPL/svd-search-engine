@@ -1,6 +1,8 @@
 import sqlite3
 import nltk
 import concurrent.futures
+import pickle
+import os
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
@@ -36,7 +38,7 @@ def process_text(text): # for multiple processes
     return set()
         
 def preprocess(db_path : str, lang : str):
-    with open("./EN-Stopwords.txt", encoding="utf-8") as f:
+    with open("./input/EN-Stopwords.txt", encoding="utf-8") as f:
         file_stopwords = {line.strip() for line in f if line.strip()}
 
     stop_words = set(stopwords.words(lang)) | set(punctuation) | file_stopwords
@@ -58,7 +60,13 @@ def preprocess(db_path : str, lang : str):
 
 def main(db_path, lang):
     terms = preprocess(db_path, lang)
-    print(len(terms))
+    term_to_index = {term : i for i, term in enumerate(terms)}
+
+    os.makedirs("./objects", exist_ok = True)
+    with open("./objects/term_to_index.pkl", "wb") as f:
+        pickle.dump(term_to_index, f)
+    
+    print("Dictionary term_to_index saved in the directory!")
 
 
 if __name__ == "__main__":
