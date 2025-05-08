@@ -85,7 +85,7 @@ class Search():
             if self.k == 0:
                 print("SVD is needed to use ANN!")
                 return []
-            if not self.p: # only works with particular SVD
+            if self.p is None: # only works with particular SVD
                 self.p = hnswlib.Index(space = 'cosine', dim = self.A.shape[0])
                 self.p.init_index(max_elements = self.A.shape[1])
                 self.p.set_ef(50)
