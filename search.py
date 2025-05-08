@@ -82,24 +82,23 @@ class Search():
             return res
 
         else:
-            if self.k < 32:
-                print("Too low k to use ANN!")
+            if self.k == 0:
+                print("SVD is needed to use ANN!")
                 return []
             if not self.p: # only works with particular SVD
-                self.p = hnswlib.Index(space = 'cosine', dim = len(Search.term_to_index))
+                self.p = hnswlib.Index(space = 'cosine', dim = self.A.shape[0])
                 self.p.init_index(max_elements = self.A.shape[1])
                 self.p.set_ef(50)
-                self.p.add_items(self.A)
-            else:
-                indices, distances = self.p.knn_query(q, number)
+                self.p.add_items(self.A.T)
 
-                res = [(int(idx) + 1, distance) for idx, distance in zip(indices, distances)] # reindex
+            indices, distances = self.p.knn_query(q.T, number)
+            res = [(int(idx) + 1, distance) for idx, distance in zip(indices[0], distances[0])] # reindex
 
-                return res
+            return res
         
     
 if __name__ == "__main__":
-    s = Search(16)
+    s = Search(128)
     conn = sqlite3.connect("./data/wiki.db")
     
     while True:
@@ -108,7 +107,7 @@ if __name__ == "__main__":
             conn.close()
             break
 
-        res = s.search(query, Mode.COSINE, 10)
+        res = s.search(query, Mode.ANN, 10)
 
         cursor = conn.cursor()
         placeholders = ','.join(['?'] * len(res))
