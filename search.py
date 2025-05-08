@@ -1,5 +1,6 @@
 import sqlite3
 import pickle
+import hnswlib
 import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
@@ -15,15 +16,21 @@ class Mode(Enum):
 class Search():
     with open("./data/objects/term_to_index.pkl", "rb") as f:
         term_to_index = pickle.load(f) # static attribute
+        term_to_index : dict
 
     ps = PorterStemmer()
 
     def __init__(self, k = 0):
+        self.k = k
+
         match k:
             case 0: matrix_path = "matrix.pkl"
 
         with open(f"./data/objects/{matrix_path}", "rb") as f:
             self.A = pickle.load(f)
+            self.A : csr_matrix
+
+        self.p = None
 
     def _prepare_query_vector(self, text : str):
         terms = [Search.ps.stem(word, to_lowercase = True) for word in word_tokenize(text)]
@@ -52,28 +59,47 @@ class Search():
         if mode == Mode.COSINE:
             similarities = abs(q.T @ self.A)
             similarities : csr_matrix
-            res = similarities.toarray()
-            res : np.ndarray
-            top_k_idx = np.argsort(res[0])[::-1][:number]
+            arr = similarities.toarray()
+            top_k_idx = np.argsort(arr[0])[::-1][:number]
 
-            conn = sqlite3.connect("./data/wiki.db")
-            cursor = conn.cursor()
-            placeholders = ','.join(['?'] * len(top_k_idx))
-            query = f"SELECT title, url FROM articles WHERE id IN ({placeholders})"
-            cursor.execute(query, [int(idx) + 1 for idx in top_k_idx])
-            results = cursor.fetchall()
-            conn.close()
-            for idx, (title, url) in zip(top_k_idx, results):
-                print(f"{title} - {url} | cos = {res[0][idx]:.4f}")
+            res = [(int(idx) + 1, arr[0, idx]) for idx in top_k_idx] # reindex for sql
+
+            return res
 
         else:
-            raise NotImplemented
+            if self.k < 50:
+                print("Too low k to use ANN!")
+                return []
+            if not self.p: # only works with particular SVD
+                self.p = hnswlib.Index(space = 'cosine', dim = len(Search.term_to_index))
+                self.p.init_index(max_elements = self.A.shape[1])
+                self.p.set_ef(50)
+                self.p.add_items(self.A)
+            else:
+                indices, distances = self.p.knn_query(q, number)
+
+                res = [(int(idx) + 1, distance) for idx, distance in zip(indices, distances)] # reindex
+
+                return res
         
     
 if __name__ == "__main__":
     s = Search()
+    conn = sqlite3.connect("./data/wiki.db")
+    
     while True:
         query = input("Enter search query (or 'exit' to quit): ")
         if query.lower() == 'exit':
+            conn.close()
             break
-        s.search(query, Mode.COSINE, 10)
+
+        res = s.search(query, Mode.COSINE, 10)
+
+        cursor = conn.cursor()
+        placeholders = ','.join(['?'] * len(res))
+        query = f"SELECT title, url FROM articles WHERE id IN ({placeholders})"
+        cursor.execute(query, [idx for idx, _ in res])
+        db_query = cursor.fetchall()
+        for (_, match), (title, url) in zip(res, db_query):
+            print(f"{title} - {url} | match = {match:.4f}")
+        print()
