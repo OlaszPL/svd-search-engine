@@ -10,6 +10,19 @@ st.set_page_config(
     layout="wide"
 )
 
+# Custom CSS to reduce padding
+st.markdown("""
+    <style>
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 1rem;
+        }
+        .stMarkdown h1 {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Initialize session state
 if 'search_engine' not in st.session_state:
     st.session_state.search_engine = None
@@ -66,7 +79,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### About")
     st.info("""
-        This search engine uses count vectors and singular value decomposition 
+        This search engine uses Count Vectors and Singular Value Decomposition 
         to find semantically similar articles.
     """)
 
