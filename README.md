@@ -1,5 +1,7 @@
 # SVD Search Engine 🔍
 
+### Aleksander Jóźwik
+
 SVD Search Engine to silnik wyszukiwania wykorzystujący metodę Singular Value Decomposition (SVD) do analizy i wyszukiwania podobnych artykułów. Dzięki redukcji wymiarowości oraz ekstrakcji kluczowych cech tekstu, umożliwia efektywne porównywanie treści. System operuje na wektorach cech typu _bag_of_words_, które odzwierciedlają częstość występowania słów kluczowych w artykułach.
 
 Rozwiązanie pozwala na przeszukiwanie artykułów pochodzących z dowolnego zrzutu danych z _Wikipedii_ (w formacie _.xml_).
