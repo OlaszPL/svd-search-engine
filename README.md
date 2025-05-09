@@ -124,6 +124,8 @@ Wyszukiwania bez SVD przeprowadzono dla cosinusa a z SVD dla ANN.
 | 9       | Battle of Hastings (0.3370)                    | Three-age system (0.6638)    | Presbyopia (0.5853)        | Campaign of Danture (1594) (0.6227)   | Battle of Svolder (0.6342)   | Isaac ben Moses of Vienna (0.3990)        |
 | 10      | Battle of Amiens (1918) (0.3311)                         | Presbyopia (0.6592)   | Theodoric Borgognoni (0.5789)               | Battle of Svolder (0.6213)          | Battle of Al Rahlayn (0.6340)          | Theodoric Borgognoni (0.3868)              |
 
+Bez SVD wyniki są dosyć słabo dopasowane i ogólnikowe - hasła typu średniowiecze, bitwa. Dopiero pod koniec pojawiają się rzeczywiste bitwy, lecz ostatnia jest z okresu I wojny światowej. Dla k = 128 oraz 256 wyniki wydają się niezwiązane z tematem - w najlepszym przypadku dotyczą ogólnie średniowiecza albo I wojny światowej. Dla k = 384 i 512 wyniki są bardzo dobre - większość z nich opisuje bitwy ze średniowiecza. Z kolei k = 640 daje już o wiele gorsze wyniki, luźno powiązane ze średniowieczem.
+
 ### Fraza: "Donald Trump"
 
 | Pozycja | Bez SVD                                      | SVD k = 128               | SVD k = 256                     | SVD k = 384                | SVD k = 512                | SVD k = 640                   |
@@ -139,6 +141,8 @@ Wyszukiwania bez SVD przeprowadzono dla cosinusa a z SVD dla ANN.
 | 9       | Attempted assassination of Donald Trump (0.6967)                    | Inauguration of Donald Trump (0.7854)    | 2024 United States presidential debates (0.7135)        | Inauguration of Donald Trump (0.7349)   | Attempted assassination of Donald Trump (0.8193)   | Attempted assassination of Donald Trump (0.8512)        |
 | 10      | Presidency of Donald Trump (0.6709)                         | Second presidency of Donald Trump (0.7846)   | Inauguration of Donald Trump (0.7030)               | Attempted assassination of Donald Trump (0.7318)          | Presidency of Donald Trump (0.8146)          | Presidency of Donald Trump (0.8445)              |
 
+Dla tak łatwego zapytania wyniki w większości przypadków są do siebie zbliżone i opisują albo pytaną osobę, albo powiązane kampanie prezydenckie, wydarzenia, członków rodziny. Najciekawsze jest to, że dla k = 128 odnaleźć można jego bezpośrednich konkurentów w ostatnich wyborach prezydenckich - Kamalę Harris i Joe Bidena. Na podstawie tych danych trudno zauważyć przewagę jakiegokolwiek k.
+
 ### Fraza: "the most renowned discrete mathematicians of all time"
 
 | Pozycja | Bez SVD                                      | SVD k = 128               | SVD k = 256                     | SVD k = 384                | SVD k = 512                | SVD k = 640                   |
@@ -153,3 +157,11 @@ Wyszukiwania bez SVD przeprowadzono dla cosinusa a z SVD dla ANN.
 | 8       | Moscow Time (0.2874)                 | Alaska Standard Time (0.8819)    | Time in Vietnam (0.9429)          | Bhutan Time (0.9232)     | Bhutan Time (0.9012)     | Time in India (0.8656)          |
 | 9       | Time in India (0.2719)                    | Time in Vietnam (0.8811)    | Kyrgyzstan Time (0.9395)        | Kyrgyzstan Time (0.9163)   | Kyrgyzstan Time (0.8942)   | Bhutan Time (0.8653)        |
 | 10      | Wright Renown (0.2633)                         | Depreciation (0.8761)   | Depreciation (0.9395)               | Depreciation (0.9149)          | Depreciation (0.8896)          | Kyrgyzstan Time (0.8577)              |
+
+To zapytanie okazało się niezwykle trudne dla wyszukiwarki. Tylko wersja bez SVD cokolwiek wspomina o matematyce dyskretnej ale dopiero na 5 miejscu. Dla dowolnego k wyszukiwarka sobie nie poradziła, a wyniki wyszukiwania zostały zdominowane przez tematy związane z czasem, pomimo że to tylko jedno słowo z całego zapytania.
+
+## Wnioski
+
++ Można przypuszczać, że najlepsze wyniki będą widoczne dla `k` z zakresu 300 - 400. Poniżej i powyżej tej wartości wyniki potrafią tylko luźno nazwiązywać do zadanego zapytania.
+
++ Dla większych wartości `k` zapytania wykorzystujące ANN wykonywały się szybciej niż te przy pomocy miary opartej na wartości cosinusa. Co więcej dla k = 640 niemożliwym było przetesowanie dla tego drugiego sposobu, gdyż dochodziło do całkowitego wykorzystania pamięci systemowej. 
