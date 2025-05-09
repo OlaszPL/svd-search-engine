@@ -88,7 +88,6 @@ class Search():
         elif self.k == 0:
             print("SVD is needed to use ANN!")
             return []
-        
         # only works with particular SVD
         indices, distances = self.index.knn_query(q.T, number)
         res = [(int(idx) + 1, 1 - distance) for idx, distance in zip(indices[0], distances[0])] # reindex

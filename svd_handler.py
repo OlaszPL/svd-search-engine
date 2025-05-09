@@ -15,7 +15,7 @@ def give_svd_path(k):
     if os.path.isfile(f"./data/objects/SVD/{matrix_filename}")and os.path.isfile(f"./data/objects/SVD/{model_filename}"):
         with open(f"./data/objects/SVD/{model_filename}", "rb") as f:
             svd = pickle.load(f)
-        return svd, matrix_filename
+        return svd, matrix_filename, index_filename
     else:
         # create svd matrix
         print(f"Performing new SVD for k = {k}...")
