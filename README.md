@@ -43,7 +43,7 @@ python ./create_wiki_db.py
 ```
 Zaczekaj na utworzenie bazy danych.
 
-Plik _.xml_ parse'owany jest przy pomocy [mojego forka](https://github.com/OlaszPL/wikiextractor/) biblioteki _wikiextractor_, gdzie naprawiłem wsparcie dla Pythona 3.13, systemu Windows, funkcjonowanie zapisu do plików _json_ oraz przetwarzanie list punktowanych. Pakiet został zamieszczony w folderze `data`, nie trzeba podejmować dodatkowych kroków.
+Plik _.xml_ parse'owany jest przy pomocy [własnego forka](https://github.com/OlaszPL/wikiextractor/) biblioteki _wikiextractor_, gdzie naprawiłem wsparcie dla Pythona 3.13, systemu Windows, funkcjonowanie zapisu do plików _json_ oraz przetwarzanie list punktowanych. Pakiet został zamieszczony w folderze `data`, nie trzeba podejmować dodatkowych kroków.
 
 **3. Uruchom tworzenie _bag_of_words_, a następnie _term_by_document_:**
 ```bash
@@ -68,7 +68,7 @@ Wybranie przy pomocy suwaka _k_ utworzy SVD dla macierzy oraz indeks HNSW. Czynn
 
 ### Pozyskiwane dane
 
-Dane pochodzą z oficjalnych zrzutów Wikipedii w formacie _.xml_ (do testów skorzystałem z _simplewiki_). Plik _.xml_ parse'owany jest przy pomocy [mojego forka](https://github.com/OlaszPL/wikiextractor/) biblioteki _wikiextractor_, gdzie naprawiłem wsparcie dla Pythona 3.13, systemu Windows, funkcjonowanie zapisu do plików _json_ oraz przetwarzanie list punktowanych. Następnie tworzona jest baza danych SQLite - dla wygodnego dostępu w późniejszych etapach przetwarzania.
+Dane pochodzą z oficjalnych zrzutów Wikipedii w formacie _.xml_ (do testów skorzystałem z _simplewiki_). Plik _.xml_ parse'owany jest przy pomocy [własnego forka](https://github.com/OlaszPL/wikiextractor/) biblioteki _wikiextractor_, gdzie naprawiłem wsparcie dla Pythona 3.13, systemu Windows, funkcjonowanie zapisu do plików _json_ oraz przetwarzanie list punktowanych. Następnie tworzona jest baza danych SQLite - dla wygodnego dostępu w późniejszych etapach przetwarzania.
 
 ### Utworzenie zbioru słów _bag_of_words_
 
