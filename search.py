@@ -92,13 +92,13 @@ class Search():
                 self.p.add_items(self.A.T)
 
             indices, distances = self.p.knn_query(q.T, number)
-            res = [(int(idx) + 1, distance) for idx, distance in zip(indices[0], distances[0])] # reindex
+            res = [(int(idx) + 1, 1 - distance) for idx, distance in zip(indices[0], distances[0])] # reindex
 
             return res
         
     
 if __name__ == "__main__":
-    s = Search(128)
+    s = Search(512)
     conn = sqlite3.connect("./data/wiki.db")
     
     while True:

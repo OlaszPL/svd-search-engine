@@ -33,4 +33,4 @@ def give_svd_path(k):
     return svd, matrix_filename
 
 if __name__ == "__main__":
-    give_svd_path(32)
+    give_svd_path(512)
