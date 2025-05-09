@@ -8,7 +8,7 @@ Rozwiązanie pozwala na przeszukiwanie artykułów pochodzących z dowolnego zrz
 
 ## Użytkowanie
 
-### Wymagania techniczne
+### 🛠️ Wymagania techniczne
 
 - Python 3.13+
 - Biblioteki: _numpy, hnswlib, nltk, scikit-learn, streamlit, tqdm_
@@ -16,7 +16,7 @@ Rozwiązanie pozwala na przeszukiwanie artykułów pochodzących z dowolnego zrz
 > [!IMPORTANT]
 > Wiele operacji stosowanych w wyszukiwarce intenstywnie korzysta z zasobów pamięci operacyjnej, dlatego zalecane jest ponad 16GB pamięci RAM (w szczególnośći dla dużej liczby _k_ stosowanej w SVD).
 
-### Wymagania wstępne
+### 📦 Wymagania wstępne
 
 **1. Sklonuj repozytorium:**
 ```bash
@@ -33,7 +33,7 @@ cd svd-search-engine
 pip install -r requirements.txt
 ```
 
-### Przygotowanie danych
+### 📄 Przygotowanie danych
 
 **1. Pobierz dowolny zrzut danych z Wikipedii (w języku angielskim) [z tej strony](https://dumps.wikimedia.org/backup-index.html), np. zrzut [_simple_english_](https://dumps.wikimedia.org/simplewiki/20250420/simplewiki-20250420-pages-articles-multistream.xml.bz2) (w formacie _.xml.bz2_).**
 
@@ -55,7 +55,7 @@ python ./term-by-document.py
 >[!NOTE]
 > Obie operacje wymagają czasu na inicjalizację procesów oraz przetworzenie wszystkich artykułów.
 
-## Uruchamianie aplikacji
+## 🖥️ Uruchamianie aplikacji
 
 **Przejdź do katalogu głównego a następnie wywołaj:**
 ```bash
@@ -98,11 +98,11 @@ Następnie wyszukiwanie odbywać się może na 2 sposoby:
 1. Z wykorzystaniem wartości _cosinusa_ między wektorami oraz posortowaniem malejąco poprzez ``np.argsort``,
 2. Przy pomocy ANN (Approximate Nearest Neighbors) z wykorzystaniem bibliotecznego algorytmu HNSW (Hierarchical Navigable Small World). Ze względu na dostępne zasoby systemowe, ANN można zastosować tylko na macierzach z SVD. Indeks _hnswlib_ tworzony jest podczas generowania SVD i wczytywany po utworzeniu obiektu ``Search``.
 
-### Frontend
+### ✏️ Frontend
 
 Frontent wyszukiwarki napisany został z wykorzystaniem frameworka ``streamlit``.
 
-## Porównanie działania programu bez usuwania szumu i z usuwaniem szumu - dla różnych wartości ``k``
+## 📊 Porównanie działania programu bez usuwania szumu i z usuwaniem szumu - dla różnych wartości ``k``
 
 Testy przeprowadzono dla zrzutu _simplewiki_, z którego zgromadzono **266054** artykuły, których korpus zawiera **775682** słów (nie usuwano słów występujących rzadko, gdyż wykorzystano macierz rzadką oraz TF-IDF).
 
@@ -164,4 +164,12 @@ To zapytanie okazało się niezwykle trudne dla wyszukiwarki. Tylko wersja bez S
 
 + Można przypuszczać, że najlepsze wyniki będą widoczne dla `k` z zakresu 300 - 400. Poniżej i powyżej tej wartości wyniki potrafią tylko luźno nazwiązywać do zadanego zapytania.
 
-+ Dla większych wartości `k` zapytania wykorzystujące ANN wykonywały się szybciej niż te przy pomocy miary opartej na wartości cosinusa. Co więcej dla k = 640 niemożliwym było przetesowanie dla tego drugiego sposobu, gdyż dochodziło do całkowitego wykorzystania pamięci systemowej. 
++ Dla większych wartości `k` zapytania wykorzystujące ANN wykonywały się szybciej niż te przy pomocy miary opartej na wartości cosinusa. Co więcej dla k = 640 niemożliwym było przetesowanie tego dla drugiego sposobu, gdyż dochodziło do całkowitego wykorzystania pamięci systemowej. 
+
++ Dla niskich wartości k (np. 128, 256) dekompozycja odcina zbyt dużo informacji, przez co wyniki stają się losowe lub niezwiązane z zapytaniem. Wartość k musi być na tyle duża, żeby zachować kluczowe cechy semantyczne, ale na tyle mała, żeby redukować szum — optymalny zakres zaczyna się w okolicach 384–512 dla tego zbioru danych.
+
++ Zbyt wysokie k powoduje efekt overfittingu na szumie.
+Przy k = 640 pojawiają się ponownie przypadkowe lub mniej adekwatne wyniki, co oznacza, że system zaczyna uwzględniać także mniej istotne cechy. Pokazuje to, że istnieje wartość k optymalna dla konkretnego korpusu i jej przekroczenie pogarsza trafność.
+
++ SVD nie zawsze poprawia wynik wyszukiwania — zależy od charakterystyki zapytania.
+Dla bardzo ogólnych lub krótkich fraz (np. "middle ages") wyniki bez SVD są zaskakująco przyzwoite, ponieważ bag-of-words dobrze chwyta częstość takich słów. Natomiast dla bardziej złożonych, wielowyrazowych zapytań (np. "bloody battle in middle ages") SVD zaczyna mieć przewagę dzięki uchwyceniu powiązań semantycznych między słowami.
