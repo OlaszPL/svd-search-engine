@@ -1,6 +1,6 @@
-tqdm
-nltk
-scikit-learn
-numpy
-hnswlib
-streamlit
+hnswlib>=0.8.0
+nltk>=3.9.1
+numpy>=2.2.2
+scikit-learn>=1.6.1
+streamlit>=1.45.0
+tqdm>=4.67.1
