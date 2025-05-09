@@ -146,11 +146,16 @@ if search_submitted:
                         with st.container():
                             col1, col2 = st.columns([5, 1])
                             with col1:
-                                st.markdown(f"#### {i}. {title}")
+                                st.markdown(f"##### {i}. {title}")
                                 st.markdown(f"[{url}]({url})")
-                                # Show text excerpt (limited to first 300 chars)
-                                text_excerpt = text[:300] + "..." if text and len(text) > 300 else text
-                                st.markdown(f"<small><em>{text_excerpt}</em></small>", unsafe_allow_html=True)
+                                
+                                # Create a preview of the text
+                                preview = text[:130] + "..." if text and len(text) > 150 else text
+                                
+                                # Show text in an expander
+                                with st.expander(f"{preview}", expanded = False):
+                                    st.markdown(f"<div style='max-height: 400px; overflow-y: auto;'><small><em>{text[130:]}</em></small></div>", unsafe_allow_html=True)
+                            
                             with col2:
                                 st.metric("Score", f"{match_score:.4f}")
                             st.divider()
