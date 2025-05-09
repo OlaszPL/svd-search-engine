@@ -24,12 +24,13 @@ class Search():
     def __init__(self, k = 0):
         self.k = k
         self.svd = None
+        self.index = None
 
         match k:
             case 0:
                 matrix_path = "matrix.pkl"
             case _ if k > 0:
-                self.svd, matrix_name = give_svd_path(k)
+                self.svd, matrix_name, index_name = give_svd_path(k)
                 matrix_path = f"SVD/{matrix_name}"
             case _:
                 raise ValueError(f"Unsupported value for k: {k}")
@@ -38,7 +39,10 @@ class Search():
             self.A = pickle.load(f)
             self.A : csr_matrix
 
-        self.p = None
+        if k > 0: # load hnsw index
+            self.index = hnswlib.Index(space = 'cosine', dim = self.A.shape[0])
+            self.index.load_index(f"./data/objects/SVD/{index_name}")
+
 
     def _prepare_query_vector(self, text : str):
         terms = [Search.ps.stem(word, to_lowercase = True) for word in word_tokenize(text)]
@@ -81,21 +85,15 @@ class Search():
 
             return res
 
-        else:
-            if self.k == 0:
-                print("SVD is needed to use ANN!")
-                return []
-            if self.p is None: # only works with particular SVD
-                print("Initializing hnsw index...")
-                self.p = hnswlib.Index(space = 'cosine', dim = self.A.shape[0])
-                self.p.init_index(max_elements = self.A.shape[1])
-                self.p.set_ef(50)
-                self.p.add_items(self.A.T)
+        elif self.k == 0:
+            print("SVD is needed to use ANN!")
+            return []
+        
+        # only works with particular SVD
+        indices, distances = self.index.knn_query(q.T, number)
+        res = [(int(idx) + 1, 1 - distance) for idx, distance in zip(indices[0], distances[0])] # reindex
 
-            indices, distances = self.p.knn_query(q.T, number)
-            res = [(int(idx) + 1, 1 - distance) for idx, distance in zip(indices[0], distances[0])] # reindex
-
-            return res
+        return res
         
     
 if __name__ == "__main__":
